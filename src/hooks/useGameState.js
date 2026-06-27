@@ -157,13 +157,18 @@ export function useGameState() {
   }, []);
 
   // Catch a MonAnimal
-  const catchMonAnimal = useCallback((spawnId, forceSuccess = false) => {
+  const catchMonAnimal = useCallback((spawnId, forceSuccess = false, attemptNumber = 1) => {
     const spawn = spawns.find((s) => s.id === spawnId);
     if (!spawn || spawn.caught) return null;
 
     const mon = spawn.monAnimal;
     const catchRoll = Math.random();
-    const success = forceSuccess || catchRoll <= mon.catchRate;
+    
+    // Attempt bonus: +25% catch rate for each subsequent attempt!
+    const attemptBonus = Math.max(0, attemptNumber - 1) * 0.25;
+    const finalCatchRate = mon.catchRate + attemptBonus;
+
+    const success = forceSuccess || catchRoll <= finalCatchRate;
 
     if (success) {
       // Mark spawn as caught

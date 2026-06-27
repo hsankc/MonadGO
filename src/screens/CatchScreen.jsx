@@ -88,6 +88,8 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
     }
   }, [isDragging]);
 
+  const [feedAttempts, setFeedAttempts] = useState(0);
+
   const handlePointerUp = useCallback(async (e) => {
     if (!isDragging) return;
     setIsDragging(false);
@@ -117,10 +119,13 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
         setPhase('throwing');
         setThrowAnim(true);
 
+        const currentAttempt = feedAttempts + 1;
+        setFeedAttempts(currentAttempt);
+
         // Animate coin throw
         setTimeout(() => {
           const isFirstCatch = game.playerStats.totalCatches === 0;
-          const result = game.catchMonAnimal(spawn.id, isFirstCatch);
+          const result = game.catchMonAnimal(spawn.id, isFirstCatch, currentAttempt);
           setCatchResult(result);
           setPhase('result');
           setThrowAnim(false);
@@ -132,7 +137,7 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
     } else {
       setCoinPos({ x: 0, y: 0 });
     }
-  }, [isDragging, game, spawn.id, wallet]);
+  }, [isDragging, game, spawn.id, wallet, feedAttempts]);
 
   const handleRetry = () => {
     setPhase('ready');
@@ -329,15 +334,36 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
             </p>
           )}
 
+          {!catchResult.success && (
+            <>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>💨</div>
+              <h2 style={{ color: 'var(--danger)', marginBottom: 8 }}>Oh no!</h2>
+              <p>The {mon.name} ate the Monad and escaped!</p>
+              {feedAttempts > 0 && (
+                <p style={{ color: 'var(--monad-glow)', fontSize: 14, marginTop: 8, fontWeight: 'bold' }}>
+                  Catch chance increased by +25%!
+                </p>
+              )}
+              <button
+                className="btn btn-primary"
+                onClick={handleRetry}
+                style={{ marginTop: 20 }}
+              >
+                Try Again (-0.01 MON)
+              </button>
+            </>
+          )}
+
           <div style={{ display: 'flex', gap: 12, marginTop: 32, width: '100%', maxWidth: 300 }}>
-            {!catchResult.success && (
-              <button className="btn btn-secondary btn-full" onClick={handleRetry}>
-                Try Again
+            {catchResult.success ? (
+              <button className="btn btn-primary btn-full" onClick={onClose}>
+                Awesome! 🎉
+              </button>
+            ) : (
+              <button className="btn btn-secondary btn-full" onClick={onClose}>
+                Back to Map
               </button>
             )}
-            <button className="btn btn-primary btn-full" onClick={onClose}>
-              {catchResult.success ? 'Awesome! 🎉' : 'Back to Map'}
-            </button>
           </div>
         </div>
       )}

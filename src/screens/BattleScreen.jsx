@@ -33,7 +33,7 @@ export default function BattleScreen({ wallet, game }) {
   };
 
   return (
-    <div>
+    <div style={{ paddingBottom: 100, height: '100%', overflowY: 'auto' }}>
       {/* Header */}
       <div className="screen-header">
         <h1 className="screen-title">Battle Arena</h1>
@@ -119,8 +119,12 @@ export default function BattleScreen({ wallet, game }) {
             fontWeight: 800,
             color: battleResult.won ? 'var(--success)' : 'var(--danger)',
             marginTop: 8,
+            textAlign: 'center'
           }}>
             {battleResult.won ? 'VICTORY!' : 'DEFEAT'}
+            <div style={{ fontSize: 14, marginTop: 4, color: 'var(--monad-glow)' }}>
+              {battleResult.won ? '+50 Score' : '+10 Score'}
+            </div>
           </div>
 
           <button className="btn btn-primary btn-lg btn-full" onClick={resetBattle} style={{ maxWidth: 300 }}>
