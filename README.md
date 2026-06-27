@@ -5,6 +5,12 @@
   <p>Built for the <b>Ankara Hackathon</b> ⚡</p>
 
   <div>
+    <a href="https://monadgo.vercel.app/" target="_blank">
+      <img src="https://img.shields.io/badge/PLAY_LIVE_DEMO-0D0620?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+    </a>
+  </div>
+  <br/>
+  <div>
     <img src="https://img.shields.io/badge/Blockchain-Monad-836EF9?style=for-the-badge" alt="Monad" />
     <img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react" alt="React" />
     <img src="https://img.shields.io/badge/Web3-Ethers.js-3C3C3D?style=for-the-badge&logo=ethereum" alt="Web3" />
