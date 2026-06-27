@@ -142,8 +142,8 @@ export default function BattleScreen({ wallet, game }) {
                 animation: 'fade-in 0.5s ease-out'
               }}>
                 {battleResult.won ? 'VICTORY!' : 'DEFEAT'}
-                <div style={{ fontSize: 14, marginTop: 4, color: 'var(--monad-glow)' }}>
-                  {battleResult.won ? '+50 Score' : '+10 Score'}
+                <div style={{ fontSize: 14, marginTop: 4, color: battleResult.won ? 'var(--success)' : 'var(--danger)' }}>
+                  {battleResult.won ? '+50 Score' : '-20 Score'}
                 </div>
               </div>
 

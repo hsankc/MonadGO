@@ -336,7 +336,7 @@ export function useGameState() {
       totalBattles: prev.totalBattles + 1,
       wins: prev.wins + (won ? 1 : 0),
       losses: prev.losses + (won ? 0 : 1),
-      score: prev.score + (won ? 25 : 5),
+      score: Math.max(0, prev.score + (won ? 50 : -20)), // 50 for win, -20 for loss, min 0
     }));
 
     addActivity(
