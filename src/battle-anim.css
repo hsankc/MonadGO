@@ -1,0 +1,66 @@
+/* src/battle-anim.css */
+@keyframes battle-slide-left {
+  0% { transform: translateX(-150px) scale(0.8); opacity: 0; }
+  30% { transform: translateX(20px) scale(1.1); opacity: 1; }
+  40% { transform: translateX(0) scale(1); }
+  45% { transform: translateX(40px) scale(1.05) rotate(5deg); } /* Clash! */
+  50% { transform: translateX(-15px) scale(1) rotate(-2deg); }
+  60% { transform: translateX(0) scale(1) rotate(0deg); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes battle-slide-right {
+  0% { transform: translateX(150px) scale(0.8); opacity: 0; }
+  30% { transform: translateX(-20px) scale(1.1); opacity: 1; }
+  40% { transform: translateX(0) scale(1); }
+  45% { transform: translateX(-40px) scale(1.05) rotate(-5deg); } /* Clash! */
+  50% { transform: translateX(15px) scale(1) rotate(2deg); }
+  60% { transform: translateX(0) scale(1) rotate(0deg); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes hit-flash {
+  0% { filter: brightness(1); }
+  43% { filter: brightness(1); }
+  45% { filter: brightness(2) drop-shadow(0 0 40px white); } /* Flash at Clash */
+  55% { filter: brightness(1); }
+  100% { filter: brightness(1); }
+}
+
+.anim-fighter-left {
+  animation: battle-slide-left 2s cubic-bezier(0.25, 1, 0.5, 1) forwards, hit-flash 2s ease-out forwards;
+}
+
+.anim-fighter-right {
+  animation: battle-slide-right 2s cubic-bezier(0.25, 1, 0.5, 1) forwards, hit-flash 2s ease-out forwards;
+}
+
+.clash-explosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 80px;
+  animation: explode 2s ease-out forwards;
+  z-index: 50;
+  pointer-events: none;
+}
+
+@keyframes explode {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: blur(10px); }
+  43% { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: blur(10px); }
+  45% { transform: translate(-50%, -50%) scale(2); opacity: 1; filter: blur(0px); }
+  60% { transform: translate(-50%, -50%) scale(1); opacity: 0; filter: blur(10px); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; filter: blur(10px); }
+}
+
+.anim-vs {
+  animation: vs-pulse-intro 2s ease-out forwards;
+}
+
+@keyframes vs-pulse-intro {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  30% { transform: scale(1.5) rotate(10deg); opacity: 1; }
+  40% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1); }
+}
