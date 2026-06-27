@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Scanner } from '@yudiel/react-qr-scanner';
 
 export default function ProfileScreen({ wallet, game }) {
   const [isScanning, setIsScanning] = useState(false);
@@ -7,10 +8,15 @@ export default function ProfileScreen({ wallet, game }) {
 
   const { playerStats, badges, addBadge, claimBadgePower, claimBadgeMon } = game;
 
-  const handleScanQR = () => {
-    setIsScanning(true);
-    // Simulate a 2-second scan then award the badge
-    setTimeout(() => {
+  const handleScanClick = () => {
+    setIsScanning(!isScanning);
+  };
+
+  const handleScanResult = (result) => {
+    if (!result || !result[0]) return;
+    const value = result[0].rawValue;
+    
+    if (value === "nadgo://badge/ankara-hackathon-26") {
       setIsScanning(false);
       if (!badges.includes('Ankara Hackathon \'26')) {
         addBadge('Ankara Hackathon \'26');
@@ -18,7 +24,7 @@ export default function ProfileScreen({ wallet, game }) {
       } else {
         alert("You already have this badge!");
       }
-    }, 2000);
+    }
   };
 
   const handleClaimPower = () => {
@@ -99,18 +105,19 @@ export default function ProfileScreen({ wallet, game }) {
         <h3 style={{ fontSize: 18, color: 'var(--text-secondary)' }}>Event Badges</h3>
         <button
           className="btn btn-primary"
-          onClick={handleScanQR}
-          disabled={isScanning}
+          onClick={handleScanClick}
           style={{ padding: '8px 16px', fontSize: 14 }}
         >
-          {isScanning ? 'Scanning...' : '📷 Scan Event QR'}
+          {isScanning ? 'Cancel Scan' : '📷 Scan Event QR'}
         </button>
       </div>
 
       {isScanning && (
-        <div style={{ padding: 32, textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--monad-glow)', marginBottom: 24 }}>
-          <div style={{ width: 40, height: 40, border: '3px solid var(--monad-glow)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px auto' }} />
-          <p style={{ color: 'var(--monad-glow)' }}>Looking for Hackathon QR Code...</p>
+        <div style={{ padding: 16, textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--monad-glow)', marginBottom: 24, overflow: 'hidden' }}>
+          <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+            <Scanner onScan={handleScanResult} />
+          </div>
+          <p style={{ color: 'var(--monad-glow)', marginTop: 16, fontWeight: 'bold' }}>Point camera at Hackathon QR Code</p>
         </div>
       )}
 
