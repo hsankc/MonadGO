@@ -58,7 +58,7 @@ export default function PermissionsScreen({ onComplete }) {
         <div style={{ fontSize: 64, marginBottom: 24, animation: 'bounce 2s infinite' }}>📸📍</div>
         <h1 className="onboarding-logo" style={{ fontSize: 32 }}>Permissions</h1>
         <p className="onboarding-subtitle" style={{ fontSize: 16, lineHeight: 1.5 }}>
-          NadGO needs access to your <b>Camera</b> for catching MonAnimals and <b>Location</b> to find them on the map.
+          Monad Go needs access to your <b>Camera</b> for catching MonAnimals and <b>Location</b> to find them on the map.
         </p>
 
         <div className="glass-card" style={{ padding: 20, textAlign: 'left', marginBottom: 32 }}>

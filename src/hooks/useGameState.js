@@ -443,7 +443,7 @@ export function useGameState(walletAddress) {
       return { ...prev, tweeted: true };
     });
     setPlayerStats(prev => ({ ...prev, score: prev.score + 20 }));
-    addActivity('Shared NadGO on X! +20 Score 📣');
+    addActivity('Shared Monad Go on X! +20 Score 📣');
   }, []);
 
   return {

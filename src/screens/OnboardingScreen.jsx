@@ -3,7 +3,7 @@ import { MONANIMALS } from '../config/monanimals';
 
 const steps = [
   {
-    title: 'Welcome to NadGO',
+    title: 'Welcome to Monad Go',
     subtitle: 'Catch MonAnimals on Monad blockchain',
     content: 'Explore the world, catch the 7 legendary MonAnimals, battle other trainers, and build your collection as NFTs on Monad — the fastest EVM chain.',
     emoji: '⚡',
@@ -46,7 +46,7 @@ export default function OnboardingScreen({ wallet, onComplete }) {
 
   const handleSkip = () => {
     if (!wallet.isConnected) {
-      alert("Please connect your wallet to play NadGO!");
+      alert("Please connect your wallet to play Monad Go!");
       return;
     }
     onComplete();

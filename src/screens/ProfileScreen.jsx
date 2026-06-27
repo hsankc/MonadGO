@@ -201,7 +201,7 @@ export default function ProfileScreen({ wallet, game }) {
             ) : (
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-secondary" style={{ padding: '6px 10px', fontSize: 11 }} onClick={() => {
-                  const tweetText = encodeURIComponent("I'm playing NadGO — a Pokémon GO style game on Monad blockchain! Catch MonAnimals, battle & earn! 🎮⚡\n\n#Monad #NadGO #AnkaraHackathon @moaborz");
+                  const tweetText = encodeURIComponent("I'm playing Monad Go — a Pokémon GO style game on Monad blockchain! Catch MonAnimals, battle & earn! 🎮⚡\n\n@monad_dev");
                   window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, '_blank');
                 }}>
                   Tweet 🐦
@@ -219,7 +219,7 @@ export default function ProfileScreen({ wallet, game }) {
       {showQR && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)' }} onClick={() => setShowQR(false)}>
           <div className="glass-card" style={{ padding: 32, textAlign: 'center', maxWidth: 320 }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, marginBottom: 4 }}>Join NadGO!</h3>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, marginBottom: 4 }}>Join Monad Go!</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: 12, marginBottom: 20 }}>Scan to play on your phone</p>
             <div style={{ background: 'white', padding: 16, borderRadius: 12, display: 'inline-block', marginBottom: 16 }}>
               <QRCodeSVG value={APP_URL} size={200} level="H" />
