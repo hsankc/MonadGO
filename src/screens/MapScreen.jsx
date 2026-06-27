@@ -50,7 +50,7 @@ function AutoCenter({ position }) {
   return null;
 }
 
-export default function MapScreen({ theme, wallet, geo, game, onCatchStart }) {
+export default function MapScreen({ theme, wallet, geo, game, onCatchStart, onScanStart }) {
   const mapCenter = geo.position || { lat: HACKATHON_CENTER.lat, lng: HACKATHON_CENTER.lng };
   const firstLoad = useRef(true);
 

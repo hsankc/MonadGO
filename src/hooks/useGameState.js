@@ -348,5 +348,6 @@ export function useGameState() {
     doBattle,
     getLeaderboard,
     addActivity,
+    claimScannerPower,
   };
 }
