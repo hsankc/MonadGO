@@ -119,7 +119,8 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
 
         // Animate coin throw
         setTimeout(() => {
-          const result = game.catchMonAnimal(spawn.id, true); // forceSuccess = true
+          const isFirstCatch = game.playerStats.totalCatches === 0;
+          const result = game.catchMonAnimal(spawn.id, isFirstCatch);
           setCatchResult(result);
           setPhase('result');
           setThrowAnim(false);
