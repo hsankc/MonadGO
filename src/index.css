@@ -541,12 +541,13 @@ input:focus, textarea:focus, select:focus {
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  background: rgba(13, 6, 32, 0.85);
+  background: var(--bg-overlay);
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .map-marker-pulse {
@@ -643,7 +644,7 @@ input:focus, textarea:focus, select:focus {
   align-items: center;
   justify-content: space-between;
   z-index: 5;
-  background: rgba(13, 6, 32, 0.7);
+  background: var(--bg-overlay);
   backdrop-filter: blur(12px);
 }
 

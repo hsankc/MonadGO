@@ -9,12 +9,14 @@ import BattleScreen from './screens/BattleScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import ScannerScreen from './screens/ScannerScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 const SCREENS = {
   MAP: 'map',
   LIBRARY: 'library',
   BATTLE: 'battle',
   LEADERBOARD: 'leaderboard',
+  PROFILE: 'profile',
 };
 
 function BottomNav({ activeScreen, onNavigate }) {
@@ -23,6 +25,7 @@ function BottomNav({ activeScreen, onNavigate }) {
     { id: SCREENS.LIBRARY, icon: '📚', label: 'Library' },
     { id: SCREENS.BATTLE, icon: '⚔️', label: 'Battle' },
     { id: SCREENS.LEADERBOARD, icon: '🏆', label: 'Ranks' },
+    { id: SCREENS.PROFILE, icon: '👤', label: 'Profile' },
   ];
 
   return (
@@ -144,6 +147,12 @@ export default function App() {
         )}
         {activeScreen === SCREENS.LEADERBOARD && (
           <LeaderboardScreen
+            wallet={wallet}
+            game={game}
+          />
+        )}
+        {activeScreen === SCREENS.PROFILE && (
+          <ProfileScreen
             wallet={wallet}
             game={game}
           />

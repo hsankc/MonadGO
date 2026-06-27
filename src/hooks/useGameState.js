@@ -74,6 +74,14 @@ export function useGameState() {
     } catch { return []; }
   });
 
+  // Badges
+  const [badges, setBadges] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nadgo-badges');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+
   // Player stats
   const [playerStats, setPlayerStats] = useState(() => {
     try {
@@ -106,6 +114,28 @@ export function useGameState() {
   useEffect(() => {
     localStorage.setItem('nadgo-stats', JSON.stringify(playerStats));
   }, [playerStats]);
+
+  useEffect(() => {
+    localStorage.setItem('nadgo-badges', JSON.stringify(badges));
+  }, [badges]);
+
+  const addBadge = useCallback((badgeId) => {
+    setBadges((prev) => {
+      if (prev.includes(badgeId)) return prev;
+      return [...prev, badgeId];
+    });
+    addActivity(`Earned a new badge: ${badgeId}! 🏆`);
+  }, []);
+
+  const claimBadgePower = useCallback(() => {
+    setCollection(prev => prev.map(c => ({ ...c, power: c.power + 20 })));
+    addActivity("Used Ankara Hackathon Badge: All MonAnimals got +20 Power! ⚡");
+  }, []);
+
+  const claimBadgeMon = useCallback(() => {
+    addActivity("Used Ankara Hackathon Badge: Claimed 10 Testnet MON! 💧");
+    // Since we don't have a backend to actually mint testnet MON, we just show this simulated activity.
+  }, []);
 
   // Respawn timer
   useEffect(() => {
@@ -343,11 +373,15 @@ export function useGameState() {
     battleHistory,
     playerStats,
     activityFeed,
+    badges,
     catchMonAnimal,
     feedMonAnimal,
     doBattle,
     getLeaderboard,
     addActivity,
     claimScannerPower,
+    addBadge,
+    claimBadgePower,
+    claimBadgeMon,
   };
 }

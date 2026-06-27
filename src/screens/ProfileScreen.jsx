@@ -1,0 +1,171 @@
+import { useState, useEffect } from 'react';
+
+export default function ProfileScreen({ wallet, game }) {
+  const [isScanning, setIsScanning] = useState(false);
+  const [claimedPower, setClaimedPower] = useState(() => localStorage.getItem('nadgo-claimed-power') === 'true');
+  const [claimedMon, setClaimedMon] = useState(() => localStorage.getItem('nadgo-claimed-mon') === 'true');
+
+  const { playerStats, badges, addBadge, claimBadgePower, claimBadgeMon } = game;
+
+  const handleScanQR = () => {
+    setIsScanning(true);
+    // Simulate a 2-second scan then award the badge
+    setTimeout(() => {
+      setIsScanning(false);
+      if (!badges.includes('Ankara Hackathon \'26')) {
+        addBadge('Ankara Hackathon \'26');
+        alert("🎉 Successfully scanned! You earned the 'Ankara Hackathon \\'26' badge!");
+      } else {
+        alert("You already have this badge!");
+      }
+    }, 2000);
+  };
+
+  const handleClaimPower = () => {
+    if (claimedPower) return;
+    claimBadgePower();
+    setClaimedPower(true);
+    localStorage.setItem('nadgo-claimed-power', 'true');
+    alert("⚡ All your MonAnimals received +20 Power!");
+  };
+
+  const handleClaimMon = () => {
+    if (claimedMon) return;
+    claimBadgeMon();
+    setClaimedMon(true);
+    localStorage.setItem('nadgo-claimed-mon', 'true');
+    alert("💧 10 Testnet MON has been simulated and added to your activity feed!");
+  };
+
+  return (
+    <div style={{ padding: 20, paddingTop: 60, paddingBottom: 100, overflowY: 'auto', height: '100%' }}>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, marginBottom: 8, color: 'var(--monad-glow)' }}>
+        Profile
+      </h1>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>
+        Manage your stats and event badges.
+      </p>
+
+      {/* Wallet Info */}
+      <div style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--glass-border)',
+        borderRadius: 'var(--radius-xl)',
+        padding: 24,
+        marginBottom: 24,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16
+      }}>
+        <div style={{
+          width: 60, height: 60, borderRadius: '50%', background: 'linear-gradient(135deg, var(--monad-purple), var(--monad-glow))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32
+        }}>
+          🎮
+        </div>
+        <div>
+          <h2 style={{ fontSize: 20, margin: 0, color: 'var(--text-primary)' }}>
+            {wallet.isConnected ? wallet.shortAddress : 'Guest Player'}
+          </h2>
+          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: 14 }}>
+            {wallet.isConnected ? `${wallet.balance} MON` : 'Connect wallet to play'}
+          </p>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <h3 style={{ fontSize: 18, marginBottom: 16, color: 'var(--text-secondary)' }}>Player Stats</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+        <div style={{ background: 'var(--bg-card)', padding: 16, borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--monad-glow)' }}>{playerStats.score}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total Score</div>
+        </div>
+        <div style={{ background: 'var(--bg-card)', padding: 16, borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--info)' }}>{playerStats.totalCatches}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>MonAnimals Caught</div>
+        </div>
+        <div style={{ background: 'var(--bg-card)', padding: 16, borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--success)' }}>{playerStats.wins}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Battle Wins</div>
+        </div>
+        <div style={{ background: 'var(--bg-card)', padding: 16, borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--danger)' }}>{playerStats.losses}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Battle Losses</div>
+        </div>
+      </div>
+
+      {/* Badges Section */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h3 style={{ fontSize: 18, color: 'var(--text-secondary)' }}>Event Badges</h3>
+        <button
+          className="btn btn-primary"
+          onClick={handleScanQR}
+          disabled={isScanning}
+          style={{ padding: '8px 16px', fontSize: 14 }}
+        >
+          {isScanning ? 'Scanning...' : '📷 Scan Event QR'}
+        </button>
+      </div>
+
+      {isScanning && (
+        <div style={{ padding: 32, textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--monad-glow)', marginBottom: 24 }}>
+          <div style={{ width: 40, height: 40, border: '3px solid var(--monad-glow)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px auto' }} />
+          <p style={{ color: 'var(--monad-glow)' }}>Looking for Hackathon QR Code...</p>
+        </div>
+      )}
+
+      {badges.length === 0 && !isScanning ? (
+        <div style={{ padding: 32, textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--glass-border)', color: 'var(--text-muted)' }}>
+          No badges yet. Scan a QR code at a real-world event to earn badges!
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {badges.map(badge => (
+            <div key={badge} style={{ background: 'var(--bg-card)', border: '1px solid var(--monad-glow)', borderRadius: 'var(--radius-lg)', padding: 20, boxShadow: 'var(--glow-sm)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ fontSize: 32 }}>🇹🇷</div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>{badge}</h4>
+                  <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>Exclusive Event Attendee</p>
+                </div>
+              </div>
+              
+              {/* Badge Perks */}
+              {badge === 'Ankara Hackathon \'26' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--glass-border)' }}>
+                  <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 'bold' }}>Event Perks:</p>
+                  <button
+                    onClick={handleClaimPower}
+                    disabled={claimedPower}
+                    style={{
+                      background: claimedPower ? 'var(--bg-secondary)' : 'linear-gradient(135deg, #A78BFA, #836EF9)',
+                      color: claimedPower ? 'var(--text-muted)' : '#fff',
+                      border: 'none', padding: '12px 16px', borderRadius: 12, fontWeight: 'bold', cursor: claimedPower ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {claimedPower ? '✅ Power Claimed' : '⚡ Claim +20 Power for all MonAnimals'}
+                  </button>
+                  <button
+                    onClick={handleClaimMon}
+                    disabled={claimedMon}
+                    style={{
+                      background: claimedMon ? 'var(--bg-secondary)' : 'linear-gradient(135deg, #34D399, #10B981)',
+                      color: claimedMon ? 'var(--text-muted)' : '#fff',
+                      border: 'none', padding: '12px 16px', borderRadius: 12, fontWeight: 'bold', cursor: claimedMon ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {claimedMon ? '✅ Faucet Claimed' : '💧 Claim 10 Testnet MON (Mock)'}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      <style>{`
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+      `}</style>
+    </div>
+  );
+}

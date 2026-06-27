@@ -149,12 +149,13 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart, onSc
         alignItems: 'center',
         gap: 8,
         padding: '10px 20px',
-        background: 'rgba(13, 6, 32, 0.9)',
+        background: 'var(--bg-overlay)',
         backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(131, 110, 249, 0.3)',
+        border: '1px solid var(--glass-border)',
         borderRadius: 'var(--radius-full)',
         fontSize: 13,
         fontWeight: 600,
+        color: 'var(--text-primary)'
       }}>
         <span style={{ animation: 'pulse-ring 2s ease-out infinite', width: 8, height: 8, background: '#34D399', borderRadius: '50%', display: 'inline-block' }} />
         {spawnMarkers.length} MonAnimals nearby
