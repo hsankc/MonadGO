@@ -104,7 +104,8 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart }) {
         ) : (
           <button
             className={`wallet-btn ${wallet.isConnected ? 'connected' : ''}`}
-            onClick={wallet.isConnected ? undefined : wallet.connect}
+            onClick={wallet.isConnected ? wallet.disconnect : wallet.connect}
+            title={wallet.isConnected ? "Click to disconnect" : "Connect Wallet"}
           >
             <span className="wallet-dot" />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
