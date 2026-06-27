@@ -365,10 +365,11 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
             onTouchStart={handlePointerDown}
             style={{
               position: 'relative',
+              left: 'auto',
+              bottom: 'auto',
               marginTop: 32,
               transform: `translateY(${coinPos.y}px)`,
               transition: isDragging ? 'none' : 'transform 0.3s ease',
-              margin: '32px auto 0',
             }}
           >
             ◇
