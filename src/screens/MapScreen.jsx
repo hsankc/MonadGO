@@ -88,8 +88,8 @@ export default function MapScreen({ theme, toggleTheme, wallet, geo, game, onCat
       {/* Map overlay UI */}
       <div className="map-overlay" style={{ alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/logo.png" alt="Monad Go" style={{ height: 32, width: 32, objectFit: 'contain' }} />
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: '900', color: 'var(--monad-glow)', letterSpacing: '0.5px' }}>NadGO</span>
+          <img src="/logo.png" alt="Monad Go" style={{ height: 56, width: 56, objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(131, 110, 249, 0.4))' }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: '900', color: 'var(--monad-glow)', letterSpacing: '0.5px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>MonadGO</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
