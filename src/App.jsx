@@ -10,6 +10,7 @@ import LeaderboardScreen from './screens/LeaderboardScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import ScannerScreen from './screens/ScannerScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import PermissionsScreen from './screens/PermissionsScreen';
 
 const SCREENS = {
   MAP: 'map',
@@ -50,6 +51,9 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(() => {
     return !localStorage.getItem('nadgo-onboarded');
   });
+  const [showPermissions, setShowPermissions] = useState(() => {
+    return !localStorage.getItem('nadgo-permissions-granted');
+  });
   const [catchingSpawn, setCatchingSpawn] = useState(null);
 
   const [isScanning, setIsScanning] = useState(false);
@@ -69,6 +73,11 @@ export default function App() {
   const handleOnboardingComplete = () => {
     localStorage.setItem('nadgo-onboarded', 'true');
     setShowOnboarding(false);
+  };
+
+  const handlePermissionsComplete = () => {
+    localStorage.setItem('nadgo-permissions-granted', 'true');
+    setShowPermissions(false);
   };
 
   const handleCatchStart = (spawn) => {
@@ -95,6 +104,11 @@ export default function App() {
         onComplete={handleOnboardingComplete}
       />
     );
+  }
+
+  // Show permissions step
+  if (showPermissions) {
+    return <PermissionsScreen onComplete={handlePermissionsComplete} />;
   }
 
   // Show catch screen
