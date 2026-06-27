@@ -126,18 +126,28 @@ export default function OnboardingScreen({ wallet, onComplete }) {
 
       {/* Wallet connect step */}
       {current.isWalletStep && !wallet.isConnected && (
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={wallet.connect}
-          disabled={wallet.isConnecting}
-          style={{ marginBottom: 16 }}
-        >
-          {wallet.isConnecting ? (
-            <span className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }} />
-          ) : (
-            <>🦊 Connect Wallet</>
-          )}
-        </button>
+        wallet.deepLink ? (
+          <a
+            href={wallet.deepLink}
+            className="btn btn-primary btn-lg"
+            style={{ marginBottom: 16, display: 'inline-flex', textDecoration: 'none' }}
+          >
+            🦊 Open in MetaMask App
+          </a>
+        ) : (
+          <button
+            className="btn btn-primary btn-lg"
+            onClick={wallet.connect}
+            disabled={wallet.isConnecting}
+            style={{ marginBottom: 16 }}
+          >
+            {wallet.isConnecting ? (
+              <span className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }} />
+            ) : (
+              <>🦊 Connect Wallet</>
+            )}
+          </button>
+        )
       )}
 
       {current.isWalletStep && wallet.isConnected && (

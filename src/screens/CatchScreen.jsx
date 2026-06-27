@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useCamera } from '../hooks/useCamera';
 import { MONANIMALS, RARITY_COLORS } from '../config/monanimals';
+import { ethers } from 'ethers';
+import { TREASURY_ADDRESS } from '../config/monad';
 
 export default function CatchScreen({ spawn, game, wallet, onClose }) {
   const mon = MONANIMALS.find((m) => m.id === spawn.monAnimal.id);
@@ -12,14 +14,13 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
   const [isDragging, setIsDragging] = useState(false);
   const [orientation, setOrientation] = useState({ alpha: 0, beta: 0, gamma: 0 });
   const [needsPermission, setNeedsPermission] = useState(false);
+  const [isFeeding, setIsFeeding] = useState(false);
   const containerRef = useRef(null);
   const startY = useRef(0);
   const initialOrientation = useRef(null);
 
-  // Start camera and gyroscope on mount
+  // Start gyroscope on mount
   useEffect(() => {
-    camera.startCamera();
-
     const handleOrientation = (event) => {
       if (!initialOrientation.current) {
         initialOrientation.current = {
@@ -117,6 +118,35 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
     setCoinPos({ x: 0, y: 0 });
   };
 
+  const handleFeed = async () => {
+    if (!wallet.isConnected || !wallet.signer) {
+      alert("Please connect your wallet first to feed!");
+      return;
+    }
+    
+    setIsFeeding(true);
+    try {
+      // Send 0.01 MON to treasury
+      const tx = await wallet.signer.sendTransaction({
+        to: TREASURY_ADDRESS,
+        value: ethers.parseEther("0.01")
+      });
+      
+      // Wait for tx confirmation
+      await tx.wait();
+      
+      // Give power boost and update balance
+      game.feedMonAnimal(mon.id);
+      wallet.fetchBalance(); // Refresh balance
+      alert(`Successfully fed ${mon.name} 0.01 MON! +Power boost applied.`);
+    } catch (err) {
+      console.error("Feed transaction failed", err);
+      alert("Transaction failed or rejected.");
+    } finally {
+      setIsFeeding(false);
+    }
+  };
+
   const rarityColor = RARITY_COLORS[mon.rarity];
 
   return (
@@ -154,21 +184,36 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
       </div>
 
       {/* Header */}
-      <div className="catch-header">
+      <div className="catch-header" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <button className="btn btn-ghost" onClick={onClose} style={{ color: 'white' }}>
           ← Back
         </button>
-        <div style={{
-          padding: '4px 12px',
-          borderRadius: 'var(--radius-full)',
-          background: `${rarityColor}22`,
-          border: `1px solid ${rarityColor}66`,
-          fontSize: 11,
-          fontWeight: 700,
-          color: rarityColor,
-          letterSpacing: 1,
-        }}>
-          {mon.rarity.toUpperCase()}
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          {wallet.isConnected && (
+            <div style={{
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-full)',
+              background: 'rgba(13,6,32,0.8)',
+              border: '1px solid rgba(131,110,249,0.5)',
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--monad-glow)',
+            }}>
+              {wallet.balance} MON
+            </div>
+          )}
+          <div style={{
+            padding: '4px 12px',
+            borderRadius: 'var(--radius-full)',
+            background: `${rarityColor}22`,
+            border: `1px solid ${rarityColor}66`,
+            fontSize: 11,
+            fontWeight: 700,
+            color: rarityColor,
+            letterSpacing: 1,
+          }}>
+            {mon.rarity.toUpperCase()}
+          </div>
         </div>
       </div>
 
@@ -300,28 +345,55 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
         </div>
       )}
 
-      {/* Coin to throw */}
+      {/* Bottom Controls */}
       {phase === 'ready' && (
-        <div className="catch-controls">
-          <div style={{ textAlign: 'center', flex: 1 }}>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
-              Swipe up to throw $MON coin
-            </p>
-            <div
-              className="catch-coin"
-              onPointerDown={handlePointerDown}
-              onTouchStart={handlePointerDown}
-              style={{
-                position: 'relative',
-                bottom: 'auto',
-                left: 'auto',
-                transform: `translateY(${coinPos.y}px)`,
-                transition: isDragging ? 'none' : 'transform 0.3s ease',
-                margin: '0 auto',
-              }}
+        <div style={{
+          position: 'absolute',
+          bottom: 40,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          zIndex: 10,
+        }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
+            Swipe up to throw $MON coin
+          </p>
+          
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <button 
+              className="btn btn-secondary" 
+              onClick={(e) => { e.stopPropagation(); camera.isCameraOn ? camera.stopCamera() : camera.startCamera(); }}
             >
-              ◇
-            </div>
+              {camera.isCameraOn ? '📷 AR Off' : '📷 AR On'}
+            </button>
+
+            <button 
+              className="btn btn-primary" 
+              onClick={(e) => { e.stopPropagation(); handleFeed(); }}
+              disabled={isFeeding}
+              style={{ background: 'var(--success)' }}
+            >
+              {isFeeding ? 'Tx Pending...' : '🍖 Feed (0.01 MON)'}
+            </button>
+          </div>
+
+          {/* Swipe Coin */}
+          <div
+            className="catch-coin"
+            onPointerDown={handlePointerDown}
+            onTouchStart={handlePointerDown}
+            style={{
+              position: 'relative',
+              marginTop: 32,
+              transform: `translateY(${coinPos.y}px)`,
+              transition: isDragging ? 'none' : 'transform 0.3s ease',
+              margin: '32px auto 0',
+            }}
+          >
+            ◇
           </div>
         </div>
       )}

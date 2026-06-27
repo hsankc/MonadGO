@@ -7,17 +7,30 @@ export function useWallet() {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [chainId, setChainId] = useState(null);
+  const [balance, setBalance] = useState('0.00');
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState(null);
-  const [isBurner, setIsBurner] = useState(false);
 
   const isConnected = !!account;
   const isCorrectChain = chainId === MONAD_TESTNET.chainId;
 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const deepLink = isMobile && typeof window.ethereum === 'undefined'
+    ? `https://metamask.app.link/dapp/${window.location.host}`
+    : null;
+
+  const fetchBalance = async (prov, addr) => {
+    try {
+      const bal = await prov.getBalance(addr);
+      setBalance(Number(ethers.formatEther(bal)).toFixed(4));
+    } catch (e) {
+      console.warn("Failed to fetch balance", e);
+    }
+  };
+
   // Check if already connected
   useEffect(() => {
     const checkConnection = async () => {
-      // 1. Try MetaMask first
       if (typeof window.ethereum !== 'undefined') {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -29,26 +42,11 @@ export function useWallet() {
             setSigner(sig);
             const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
             setChainId(parseInt(currentChainId, 16));
+            fetchBalance(prov, accounts[0]);
             return;
           }
         } catch (err) {
           console.error("MetaMask check error:", err);
-        }
-      }
-      
-      // 2. Try Burner Wallet
-      const burnerPk = localStorage.getItem('nadgo_burner_pk');
-      if (burnerPk) {
-        try {
-          const prov = new ethers.JsonRpcProvider(MONAD_TESTNET.rpcUrls[0]);
-          const wallet = new ethers.Wallet(burnerPk, prov);
-          setAccount(wallet.address);
-          setProvider(prov);
-          setSigner(wallet);
-          setChainId(MONAD_TESTNET.chainId);
-          setIsBurner(true);
-        } catch (err) {
-          console.error("Failed to load burner wallet", err);
         }
       }
     };
@@ -74,7 +72,7 @@ export function useWallet() {
           setSigner(sig);
           const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
           setChainId(parseInt(currentChainId, 16));
-          setIsBurner(false);
+          fetchBalance(prov, accounts[0]);
         }
       } catch (err) {
         setError(err.message);
@@ -84,28 +82,13 @@ export function useWallet() {
       return;
     }
 
-    // FALLBACK: Create a Burner Wallet instantly for mobile
-    try {
-      let burnerPk = localStorage.getItem('nadgo_burner_pk');
-      if (!burnerPk) {
-        const newWallet = ethers.Wallet.createRandom();
-        burnerPk = newWallet.privateKey;
-        localStorage.setItem('nadgo_burner_pk', burnerPk);
-      }
-      const prov = new ethers.JsonRpcProvider(MONAD_TESTNET.rpcUrls[0]);
-      const wallet = new ethers.Wallet(burnerPk, prov);
-      
-      setAccount(wallet.address);
-      setProvider(prov);
-      setSigner(wallet);
-      setChainId(MONAD_TESTNET.chainId);
-      setIsBurner(true);
-    } catch (err) {
-      setError("Failed to create Burner Wallet.");
-    } finally {
-      setIsConnecting(false);
+    if (deepLink) {
+      window.location.href = deepLink;
+    } else {
+      setError("MetaMask is not installed. Please install MetaMask to continue.");
     }
-  }, []);
+    setIsConnecting(false);
+  }, [deepLink]);
 
   const switchToMonad = useCallback(async () => {
     if (!window.ethereum) return;
@@ -143,6 +126,7 @@ export function useWallet() {
   const disconnect = useCallback(() => {
     setAccount(null);
     setSigner(null);
+    setBalance('0.00');
   }, []);
 
   const shortAddress = account
@@ -152,6 +136,7 @@ export function useWallet() {
   return {
     account,
     shortAddress,
+    balance,
     provider,
     signer,
     chainId,
@@ -159,9 +144,10 @@ export function useWallet() {
     isCorrectChain,
     isConnecting,
     error,
-    isBurner,
+    deepLink,
     connect,
     switchToMonad,
     disconnect,
+    fetchBalance: () => { if(provider && account) fetchBalance(provider, account) }
   };
 }

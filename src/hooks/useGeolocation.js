@@ -8,7 +8,7 @@ export function useGeolocation() {
   useEffect(() => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
-      setPosition({ lat: 39.883107, lng: 32.808394 }); // Fallback
+        setPosition({ lat: 39.8830914, lng: 32.808447 }); // Fallback
       return;
     }
 
@@ -24,7 +24,7 @@ export function useGeolocation() {
       (err) => {
         console.warn("Geolocation error:", err.message);
         setError(err.message);
-        setPosition({ lat: 39.883107, lng: 32.808394 });
+          setPosition({ lat: 39.8830914, lng: 32.808447 });
       },
       {
         enableHighAccuracy: true,

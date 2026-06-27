@@ -24,8 +24,8 @@ export const CONTRACTS = {
 
 // Ankara hackathon presentation location
 export const HACKATHON_CENTER = {
-  lat: 39.883107,
-  lng: 32.808394,
+  lat: 39.8830914,
+  lng: 32.808447,
   radius: 2000, // meters - 2km radius
 };
 

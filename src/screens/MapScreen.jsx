@@ -92,13 +92,29 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart }) {
           <span>{game.playerStats.totalCatches} caught</span>
         </div>
 
-        <button
-          className={`wallet-btn ${wallet.isConnected ? 'connected' : ''}`}
-          onClick={wallet.isConnected ? undefined : wallet.connect}
-        >
-          <span className="wallet-dot" />
-          <span>{wallet.isConnected ? wallet.shortAddress : 'Connect'}</span>
-        </button>
+        {wallet.deepLink && !wallet.isConnected ? (
+          <a
+            href={wallet.deepLink}
+            className="wallet-btn"
+            style={{ textDecoration: 'none' }}
+          >
+            <span className="wallet-dot" />
+            <span>Open App</span>
+          </a>
+        ) : (
+          <button
+            className={`wallet-btn ${wallet.isConnected ? 'connected' : ''}`}
+            onClick={wallet.isConnected ? undefined : wallet.connect}
+          >
+            <span className="wallet-dot" />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <span>{wallet.isConnected ? wallet.shortAddress : 'Connect'}</span>
+              {wallet.isConnected && (
+                <span style={{ fontSize: 10, color: 'var(--monad-glow)' }}>{wallet.balance} MON</span>
+              )}
+            </div>
+          </button>
+        )}
       </div>
 
       {wallet.error && (
