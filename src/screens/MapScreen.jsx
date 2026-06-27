@@ -50,7 +50,7 @@ function AutoCenter({ position }) {
   return null;
 }
 
-export default function MapScreen({ theme, wallet, geo, game, onCatchStart, onScanStart }) {
+export default function MapScreen({ theme, toggleTheme, wallet, geo, game, onCatchStart, onScanStart }) {
   const mapCenter = geo.position || { lat: HACKATHON_CENTER.lat, lng: HACKATHON_CENTER.lng };
   const firstLoad = useRef(true);
 
@@ -86,36 +86,49 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart, onSc
   return (
     <div className="map-container">
       {/* Map overlay UI */}
-      <div className="map-overlay">
-        <div className="map-stats-pill">
-          <span>🎯</span>
-          <span>{game.playerStats.totalCatches} caught</span>
+      <div className="map-overlay" style={{ alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src="/logo.png" alt="Monad Go" style={{ height: 32, width: 32, objectFit: 'contain' }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: '900', color: 'var(--monad-glow)', letterSpacing: '0.5px' }}>NadGO</span>
         </div>
 
-        {wallet.deepLink && !wallet.isConnected ? (
-          <a
-            href={wallet.deepLink}
-            className="wallet-btn"
-            style={{ textDecoration: 'none' }}
-          >
-            <span className="wallet-dot" />
-            <span>Open App</span>
-          </a>
-        ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
-            className={`wallet-btn ${wallet.isConnected ? 'connected' : ''}`}
-            onClick={wallet.isConnected ? wallet.disconnect : wallet.connect}
-            title={wallet.isConnected ? "Click to disconnect" : "Connect Wallet"}
+            onClick={toggleTheme}
+            style={{
+              width: 36, height: 36, borderRadius: '50%', background: 'var(--bg-card)',
+              border: '1px solid var(--glass-border)', boxShadow: 'var(--glow-sm)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+              cursor: 'pointer'
+            }}
           >
-            <span className="wallet-dot" />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span>{wallet.isConnected ? wallet.shortAddress : 'Connect'}</span>
-              {wallet.isConnected && (
-                <span style={{ fontSize: 10, color: 'var(--monad-glow)' }}>{wallet.balance} MON</span>
-              )}
-            </div>
+            {theme === 'dark' ? '🌞' : '🌙'}
           </button>
-        )}
+          {wallet.deepLink && !wallet.isConnected ? (
+            <a
+              href={wallet.deepLink}
+              className="wallet-btn"
+              style={{ textDecoration: 'none' }}
+            >
+              <span className="wallet-dot" />
+              <span>Open App</span>
+            </a>
+          ) : (
+            <button
+              className={`wallet-btn ${wallet.isConnected ? 'connected' : ''}`}
+              onClick={wallet.isConnected ? wallet.disconnect : wallet.connect}
+              title={wallet.isConnected ? "Click to disconnect" : "Connect Wallet"}
+            >
+              <span className="wallet-dot" />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <span>{wallet.isConnected ? wallet.shortAddress : 'Connect'}</span>
+                {wallet.isConnected && (
+                  <span style={{ fontSize: 10, color: 'var(--monad-glow)' }}>{wallet.balance} MON</span>
+                )}
+              </div>
+            </button>
+          )}
+        </div>
       </div>
 
       {wallet.error && (
@@ -142,13 +155,12 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart, onSc
       <div style={{
         position: 'absolute',
         bottom: 20,
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 16,
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        padding: '10px 20px',
+        padding: '10px 16px',
         background: 'var(--bg-overlay)',
         backdropFilter: 'blur(12px)',
         border: '1px solid var(--glass-border)',

@@ -126,6 +126,7 @@ export default function App() {
         {activeScreen === SCREENS.MAP && (
           <MapScreen
             theme={theme}
+            toggleTheme={toggleTheme}
             wallet={wallet}
             geo={geo}
             game={game}
@@ -135,53 +136,38 @@ export default function App() {
         )}
         {activeScreen === SCREENS.LIBRARY && (
           <LibraryScreen
+            theme={theme}
+            toggleTheme={toggleTheme}
             wallet={wallet}
             game={game}
           />
         )}
         {activeScreen === SCREENS.BATTLE && (
           <BattleScreen
+            theme={theme}
+            toggleTheme={toggleTheme}
             wallet={wallet}
             game={game}
           />
         )}
         {activeScreen === SCREENS.LEADERBOARD && (
           <LeaderboardScreen
+            theme={theme}
+            toggleTheme={toggleTheme}
             wallet={wallet}
             game={game}
           />
         )}
         {activeScreen === SCREENS.PROFILE && (
           <ProfileScreen
+            theme={theme}
+            toggleTheme={toggleTheme}
             wallet={wallet}
             game={game}
           />
         )}
       </div>
       <BottomNav activeScreen={activeScreen} onNavigate={setActiveScreen} />
-
-      {/* Theme Toggle Floating Button */}
-      <button
-        onClick={toggleTheme}
-        style={{
-          position: 'fixed',
-          top: 16,
-          right: 16,
-          zIndex: 400,
-          width: 40,
-          height: 40,
-          borderRadius: '50%',
-          background: 'var(--bg-card)',
-          border: '1px solid var(--glass-border)',
-          boxShadow: 'var(--glow-sm)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 20,
-        }}
-      >
-        {theme === 'dark' ? '🌞' : '🌙'}
-      </button>
     </div>
   );
 }
