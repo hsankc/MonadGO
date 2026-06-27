@@ -160,15 +160,19 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
     >
       {/* Camera background */}
       <div className="catch-camera-bg">
-        {camera.isCameraOn ? (
-          <video
-            ref={camera.videoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
+        <video
+          ref={camera.videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover',
+            display: camera.isCameraOn ? 'block' : 'none'
+          }}
+        />
+        {!camera.isCameraOn && (
           <div style={{
             width: '100%',
             height: '100%',
@@ -179,7 +183,7 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'rgba(13, 6, 32, 0.4)',
+          background: camera.isCameraOn ? 'rgba(13, 6, 32, 0.2)' : 'rgba(13, 6, 32, 0.4)',
         }} />
       </div>
 
