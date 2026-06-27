@@ -127,13 +127,13 @@ export function useGameState() {
   }, []);
 
   // Catch a MonAnimal
-  const catchMonAnimal = useCallback((spawnId) => {
+  const catchMonAnimal = useCallback((spawnId, forceSuccess = false) => {
     const spawn = spawns.find((s) => s.id === spawnId);
     if (!spawn || spawn.caught) return null;
 
     const mon = spawn.monAnimal;
     const catchRoll = Math.random();
-    const success = catchRoll <= mon.catchRate;
+    const success = forceSuccess || catchRoll <= mon.catchRate;
 
     if (success) {
       // Mark spawn as caught

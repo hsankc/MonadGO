@@ -14,13 +14,13 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
   const [isDragging, setIsDragging] = useState(false);
   const [orientation, setOrientation] = useState({ alpha: 0, beta: 0, gamma: 0 });
   const [needsPermission, setNeedsPermission] = useState(false);
-  const [isFeeding, setIsFeeding] = useState(false);
   const containerRef = useRef(null);
   const startY = useRef(0);
   const initialOrientation = useRef(null);
 
-  // Start gyroscope on mount
+  // Start camera and gyroscope on mount
   useEffect(() => {
+    camera.startCamera();
     const handleOrientation = (event) => {
       if (!initialOrientation.current) {
         initialOrientation.current = {
@@ -88,7 +88,7 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
     }
   }, [isDragging]);
 
-  const handlePointerUp = useCallback((e) => {
+  const handlePointerUp = useCallback(async (e) => {
     if (!isDragging) return;
     setIsDragging(false);
 
@@ -97,54 +97,46 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
 
     // Need minimum swipe distance to throw
     if (deltaY > 60) {
-      setPhase('throwing');
-      setThrowAnim(true);
+      if (!wallet.isConnected || !wallet.signer) {
+        alert("Please connect your wallet first!");
+        setCoinPos({ x: 0, y: 0 });
+        return;
+      }
 
-      // Animate coin throw
-      setTimeout(() => {
-        const result = game.catchMonAnimal(spawn.id);
-        setCatchResult(result);
-        setPhase('result');
-        setThrowAnim(false);
-      }, 800);
+      try {
+        // Send 0.01 MON to treasury before catching
+        const tx = await wallet.signer.sendTransaction({
+          to: TREASURY_ADDRESS,
+          value: ethers.parseEther("0.01")
+        });
+        
+        // Wait for tx confirmation
+        await tx.wait();
+        wallet.fetchBalance(); // Refresh balance
+
+        setPhase('throwing');
+        setThrowAnim(true);
+
+        // Animate coin throw
+        setTimeout(() => {
+          const result = game.catchMonAnimal(spawn.id, true); // forceSuccess = true
+          setCatchResult(result);
+          setPhase('result');
+          setThrowAnim(false);
+        }, 800);
+      } catch (err) {
+        console.error("Transaction failed or rejected", err);
+        setCoinPos({ x: 0, y: 0 }); // reset coin position
+      }
     } else {
       setCoinPos({ x: 0, y: 0 });
     }
-  }, [isDragging, game, spawn.id]);
+  }, [isDragging, game, spawn.id, wallet]);
 
   const handleRetry = () => {
     setPhase('ready');
     setCatchResult(null);
     setCoinPos({ x: 0, y: 0 });
-  };
-
-  const handleFeed = async () => {
-    if (!wallet.isConnected || !wallet.signer) {
-      alert("Please connect your wallet first to feed!");
-      return;
-    }
-    
-    setIsFeeding(true);
-    try {
-      // Send 0.01 MON to treasury
-      const tx = await wallet.signer.sendTransaction({
-        to: TREASURY_ADDRESS,
-        value: ethers.parseEther("0.01")
-      });
-      
-      // Wait for tx confirmation
-      await tx.wait();
-      
-      // Give power boost and update balance
-      game.feedMonAnimal(mon.id);
-      wallet.fetchBalance(); // Refresh balance
-      alert(`Successfully fed ${mon.name} 0.01 MON! +Power boost applied.`);
-    } catch (err) {
-      console.error("Feed transaction failed", err);
-      alert("Transaction failed or rejected.");
-    } finally {
-      setIsFeeding(false);
-    }
   };
 
   const rarityColor = RARITY_COLORS[mon.rarity];
@@ -364,25 +356,6 @@ export default function CatchScreen({ spawn, game, wallet, onClose }) {
           <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
             Swipe up to throw $MON coin
           </p>
-          
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <button 
-              className="btn btn-secondary" 
-              onClick={(e) => { e.stopPropagation(); camera.isCameraOn ? camera.stopCamera() : camera.startCamera(); }}
-            >
-              {camera.isCameraOn ? '📷 AR Off' : '📷 AR On'}
-            </button>
-
-            <button 
-              className="btn btn-primary" 
-              onClick={(e) => { e.stopPropagation(); handleFeed(); }}
-              disabled={isFeeding}
-              style={{ background: 'var(--success)' }}
-            >
-              {isFeeding ? 'Tx Pending...' : '🍖 Feed (0.01 MON)'}
-            </button>
-          </div>
 
           {/* Swipe Coin */}
           <div
