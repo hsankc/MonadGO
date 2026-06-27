@@ -17,13 +17,16 @@ function randomSpawn(center, radiusMeters) {
 function generateSpawns(center, count) {
   const spawns = [];
   
-  // Presentation Mode: 4 guaranteed monsters within ~2 meters
+  // Presentation Mode: 4 guaranteed monsters 
   for (let i = 0; i < 4; i++) {
     const mon = getRandomMonAnimal();
-    // Offset by roughly ~1-2 meters (0.00001 degrees is ~1.1 meters at equator)
+    // Scatter around ~15-30 meters (0.00015 to 0.00030 degrees)
+    const signLat = Math.random() > 0.5 ? 1 : -1;
+    const signLng = Math.random() > 0.5 ? 1 : -1;
+    
     const pos = {
-      lat: center.lat + (Math.random() * 0.00002 - 0.00001),
-      lng: center.lng + (Math.random() * 0.00002 - 0.00001),
+      lat: center.lat + signLat * (0.00015 + Math.random() * 0.00015),
+      lng: center.lng + signLng * (0.00015 + Math.random() * 0.00015),
     };
     spawns.push({
       id: `spawn-pres-${Date.now()}-${i}`,

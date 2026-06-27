@@ -146,14 +146,16 @@ export default function MapScreen({ theme, wallet, geo, game, onCatchStart }) {
       {/* Leaflet Map */}
       <MapContainer
         center={[mapCenter.lat, mapCenter.lng]}
-        zoom={15}
+        zoom={18}
+        maxZoom={22}
         zoomControl={false}
         attributionControl={false}
         style={{ width: '100%', height: '100%' }}
       >
         <TileLayer
           url={tileUrl}
-          maxZoom={19}
+          maxNativeZoom={19}
+          maxZoom={22}
         />
 
         {/* Auto center on first load */}
